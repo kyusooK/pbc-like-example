@@ -3,32 +3,22 @@
         <v-card-title>
             {{label}}
         </v-card-title>
-        <v-card-text v-if="value">
-            <div v-if="editMode" style="margin-top:-20px;">
-                <v-text-field label="Address" v-model="value.address"/>
-            </div>
-            <div v-else>
-                Address :  {{value.address }}
-            </div>
-            <div v-if="editMode" style="margin-top:-20px;">
-                <v-text-field label="Subject" v-model="value.subject"/>
-            </div>
-            <div v-else>
-                Subject :  {{value.subject }}
-            </div>
-            <div v-if="editMode" style="margin-top:-20px;">
-                <v-text-field label="Content" v-model="value.content"/>
-            </div>
-            <div v-else>
-                Content :  {{value.content }}
-            </div>
-        </v-card-text>
+        <div v-if="!editMode" style="margin-top:-20px;">
+            <v-btn v-if="!value.isliked" v-model="value.isliked" @click="toggleLike()" small icon>
+                <v-icon style="color:black;" >mdi-heart-outline</v-icon>
+            </v-btn>
+            <v-btn v-else v-model="value.isliked" @click="toggleLike()" small icon>
+                <v-icon style="color: red;" >mdi-heart</v-icon>
+            </v-btn>
+        </div>
     </div>
 </template>
 
 <script>
+    const axios = require('axios').default;
+    
     export default {
-        name:"Email",
+        name:"Likes",
         props: {
             editMode: Boolean,
             value : Object,
@@ -37,25 +27,20 @@
         created(){
             if(!this.value) {
                 this.value = {
-                    'address': '',
-                    'subject': '',
-                    'content': '',
+                    'isliked': false,
                 };
             }
         },
         watch: {
-            value(newVal) {
-                this.$emit('input', newVal);
-            },
         },
+        methods: {
+            toggleLike(){
+                this.value.isliked = !this.value.isliked;
+                axios.put(axios.fixUrl('/likes'), this.value)
+            }
+        }
     }
 </script>
 
-<style scoped>
-    .address-v-card-title {
-        display: contents;
-    }
-    .address-v-text-field {
-        margin-top:5px;
-    }
+<style>
 </style>

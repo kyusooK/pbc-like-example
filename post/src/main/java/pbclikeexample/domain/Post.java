@@ -20,6 +20,12 @@ public class Post {
     @Embedded
     private Likes likes;
 
+    @PrePersist
+    public void setLikeTopicId(){
+        this.likes = new Likes();
+        this.likes.setTopicId("post_" + this.id);
+    }
+
     public static PostRepository repository() {
         PostRepository postRepository = PostApplication.applicationContext.getBean(
             PostRepository.class
